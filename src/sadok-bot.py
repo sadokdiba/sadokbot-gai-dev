@@ -3,6 +3,7 @@ import argparse
 import json
 import os
 import logging
+import time
 from datetime import datetime
 from dotenv import load_dotenv
 
@@ -17,6 +18,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
 )
+
 
 # Function to call the API
 def make_api_call(api_key, text):
@@ -67,17 +69,24 @@ def main():
     
     print("Interactive Chatbot (Type 'exit' to quit)\n")
     while True:
-        user_input = input("You: ")
-        if user_input.lower() == "exit":
-            print("Goodbye!")
-            break
-        response = make_api_call(api_key, user_input)
-        if "error" in response:
-            print("Error:", response["error"])
-        else:
-            # Extract and display only the chatbot text response
-            bot_response = extract_text(response)
-            print("Sadok Bot:", bot_response)
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
+        try:
+            user_input = input(f"{timestamp} - You: ")
+            if user_input.lower() == "exit":
+                print("Goodbye!")
+                break
+            response = make_api_call(api_key, user_input)
+            if "error" in response:
+                print("Error:", response["error"])
+            else:
+                # Extract and display only the chatbot text response
+                bot_response = extract_text(response)
+                print(f"{timestamp} - Sadok Bot:", bot_response)
+        except KeyboardInterrupt:
+            print(f"Thank you for you using, Sadok Bot")
+            time.sleep(1)
+            print("Goodbye")
+            quit()
 
 if __name__ == "__main__":
     main()
